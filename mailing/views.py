@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from mailing.forms import MailingForm, RecipientForm, MessageForm
 from mailing.models import Mailing, RecipientMailing, Message
 
 
@@ -12,17 +13,18 @@ class MailingListView(ListView):
 
 class MailingDetailView(DetailView):
     model = Mailing
+    form_class = MailingForm
 
 
 class MailingCreateView(CreateView):
     model = Mailing
-    fields = ['first_sending', 'end_sending', 'status', 'message']
+    form_class = MailingForm
     success_url = reverse_lazy('mailing:mailing_list')
 
 
 class MailingUpdateView(UpdateView):
     model = Mailing
-    fields = ['first_sending', 'end_sending', 'status', 'message']
+    form_class = MailingForm
     success_url = reverse_lazy('mailing:mailing_list')
 
 
@@ -37,17 +39,18 @@ class RecipientMailingListView(ListView):
 
 class RecipientMailingDetailView(DetailView):
     model = RecipientMailing
+    form_class = RecipientForm
 
 
 class RecipientMailingCreateView(CreateView):
     model = RecipientMailing
-    fields = ['fio', 'email', 'comment']
+    form_class = RecipientForm
     success_url = reverse_lazy('mailing:recipientmailing_list')
 
 
 class RecipientMailingUpdateView(UpdateView):
     model = RecipientMailing
-    fields = ['fio', 'email', 'comment']
+    form_class = RecipientForm
     success_url = reverse_lazy('mailing:recipientmailing_list')
 
 
@@ -62,17 +65,18 @@ class MessageListView(ListView):
 
 class MessageDetailView(DetailView):
     model = Message
+    form_class = MessageForm
 
 
 class MessageCreateView(CreateView):
     model = Message
-    fields = ['subject', 'content']
+    form_class = MessageForm
     success_url = reverse_lazy('mailing:message_list')
 
 
 class MessageUpdateView(UpdateView):
     model = Message
-    fields = ['subject', 'content']
+    form_class = MessageForm
     success_url = reverse_lazy('mailing:message_list')
 
 

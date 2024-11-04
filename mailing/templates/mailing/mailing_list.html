@@ -18,11 +18,7 @@
     <div class="row">
         {% for mailing in object_list %}
         <div class="col-lg-4">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140"
-                 xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder"
-                 preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title>
-                <rect width="100%" height="100%" fill="var(--bs-secondary-color)"/>
-            </svg>
+
             <h2 class="fw-normal">{{mailing.first_sending }}</h2>
             <p>{{mailing.message }}</p>
             <a class="btn btn-primary" href="{% url 'mailing:mailing_detail' mailing.pk%}">Посмотреть &raquo;</a>
