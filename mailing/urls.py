@@ -3,12 +3,13 @@ from mailing.apps import MailingConfig
 from mailing.views import MailingListView, MailingDetailView, MailingCreateView, MailingUpdateView, MailingDeleteView, \
     RecipientMailingListView, RecipientMailingDetailView, RecipientMailingCreateView, RecipientMailingUpdateView, \
     RecipientMailingDeleteView, MessageDeleteView, MessageUpdateView, MessageCreateView, MessageDetailView, \
-    MessageListView
+    MessageListView, IndexView
 
 app_name = MailingConfig.name
 
 urlpatterns = [
-    path('', MailingListView.as_view(), name='mailing_list'),
+    path('', IndexView.as_view(), name='index'),
+    path('mailing/', MailingListView.as_view(), name='mailing_list'),
     path('mailing/<int:pk>/detail/', MailingDetailView.as_view(), name='mailing_detail'),
     path('mailing/new/', MailingCreateView.as_view(), name='mailing_create'),
     path('mailing/<int:pk>/edit/', MailingUpdateView.as_view(), name='mailing_update'),

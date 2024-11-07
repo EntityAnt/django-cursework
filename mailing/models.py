@@ -43,6 +43,8 @@ class Mailing(models.Model):
     end_sending = models.DateTimeField(verbose_name="Дата и время окончания отправки")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=CREATED, verbose_name="Статус рассылки")
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name="Сообщение", related_name="mailings")
+    recipients = models.ManyToManyField(RecipientMailing, related_name="recipients", verbose_name="Получатели",
+                                        help_text="Укажите получателей рассылки (используйте CTRL или COMMAND)")
 
     def __str__(self):
         return f"Рассылка {self.id}"

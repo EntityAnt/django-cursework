@@ -7,7 +7,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Главная</a>
+                    <a class="nav-link active" aria-current="page" href="{% url 'mailing:index' %}">Главная</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{% url 'mailing:mailing_list' %}">Рассылки</a>
@@ -18,6 +18,18 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'mailing:message_list' %}">Сообщения</a>
                 </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:logout' %}">Выход</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:login' %}">Вход</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:register' %}">Регистрация</a>
+                </li>
+                {% endif %}
 
             </ul>
 
