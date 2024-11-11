@@ -1,5 +1,6 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm, PasswordResetForm
 from django import forms
+from django.urls import reverse_lazy
 
 from mailing.forms import StyleFormMixin
 from users.models import User
@@ -34,8 +35,10 @@ class UserForm(StyleFormMixin, UserChangeForm):
         phone_number.attrs['data-format'] = "+7 (ddd) ddd-dd-dd"
 
 
-class PasswordRecoveryForm(forms.Form):
+class PasswordRecoveryForm(StyleFormMixin, forms.Form):
+
     email = forms.EmailField(label='Email')
+
 
     def clean_email(self):
         """
@@ -45,3 +48,10 @@ class PasswordRecoveryForm(forms.Form):
         if not User.objects.filter(email=email).exists():
             raise forms.ValidationError('Такого email нет в системе')
         return email
+
+
+class UserLoginForm(StyleFormMixin, AuthenticationForm):
+    model = User
+
+
+
