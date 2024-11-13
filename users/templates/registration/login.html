@@ -13,12 +13,18 @@
                     <button type="submit" class="btn btn-primary">
                         Войти
                     </button>
-                    <a class="btn btn-primary mt-1" href="{% url 'users:password_recovery' %}" role="button">Забыли пароль?</a>
+
                     <a class="btn btn-primary mt-1" href="{% url 'mailing:message_list' %}" role="button">Отмена</a>
 
+                    <div class="card-footer">
+                        <a href="{% url 'users:password_recovery' %}">Забыли пароль?</a>
+                    </div>
+
                 </div>
+
             </form>
         </div>
     </div>
+
 </div>
 {% endblock %}

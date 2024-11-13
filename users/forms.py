@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm, PasswordResetForm
 from django import forms
+from django.forms import ModelForm
 from django.urls import reverse_lazy
 
 from mailing.forms import StyleFormMixin
@@ -9,6 +10,7 @@ from users.models import User
 class UserRegistrationForm(StyleFormMixin, UserCreationForm):
     class Meta:
         model = User
+        template_name = 'users/user_form.html'
         fields = ('email', 'password1', 'password2')
 
     def clean_email(self):
@@ -28,7 +30,24 @@ class UserForm(StyleFormMixin, UserChangeForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        phone_number = self.fields['phone'].widget
+        phone_number = self.fields['phone_number'].widget
+
+        self.fields['password'].widget = forms.HiddenInput()
+        phone_number.attrs['class'] = "form-control bfh-phone"
+        phone_number.attrs['data-format'] = "+7 (ddd) ddd-dd-dd"
+
+
+class UserUpdateForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = User
+        fields = (
+        'first_name', 'last_name', 'email', 'password', 'phone_number', 'is_active', 'is_superuser', 'is_staff',
+        'avatar')
+        success_url = reverse_lazy('mailing:index')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        phone_number = self.fields['phone_number'].widget
 
         self.fields['password'].widget = forms.HiddenInput()
         phone_number.attrs['class'] = "form-control bfh-phone"
@@ -36,9 +55,7 @@ class UserForm(StyleFormMixin, UserChangeForm):
 
 
 class PasswordRecoveryForm(StyleFormMixin, forms.Form):
-
-    email = forms.EmailField(label='Email')
-
+    email = forms.EmailField(label='Укажите Email')
 
     def clean_email(self):
         """
@@ -52,6 +69,3 @@ class PasswordRecoveryForm(StyleFormMixin, forms.Form):
 
 class UserLoginForm(StyleFormMixin, AuthenticationForm):
     model = User
-
-
-
