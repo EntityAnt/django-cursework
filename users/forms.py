@@ -41,9 +41,10 @@ class UserUpdateForm(StyleFormMixin, ModelForm):
     class Meta:
         model = User
         fields = (
-        'first_name', 'last_name', 'email', 'password', 'phone_number', 'is_active', 'is_superuser', 'is_staff',
-        'avatar')
-        success_url = reverse_lazy('mailing:index')
+            'first_name', 'last_name', 'email', 'password', 'phone_number', 'country', 'is_active', 'is_superuser',
+            'is_staff', 'avatar'
+        )
+        success_url = reverse_lazy('users:users')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -52,6 +53,14 @@ class UserUpdateForm(StyleFormMixin, ModelForm):
         self.fields['password'].widget = forms.HiddenInput()
         phone_number.attrs['class'] = "form-control bfh-phone"
         phone_number.attrs['data-format'] = "+7 (ddd) ddd-dd-dd"
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError("Пользователь с таким Email уже существует.")
+
+        return email
 
 
 class PasswordRecoveryForm(StyleFormMixin, forms.Form):

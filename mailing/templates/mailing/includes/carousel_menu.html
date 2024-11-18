@@ -35,10 +35,42 @@
             </svg>
             <div class="container">
                 <div class="carousel-caption text-end">
-                    <p><a class="btn btn-lg btn-primary" href="{% url 'mailing:recipientmailing_list' %}">Получатели</a></p>
+                    <p><a class="btn btn-lg btn-primary" href="{% url 'mailing:recipientmailing_list' %}">Получатели</a>
+                    </p>
                 </div>
             </div>
         </div>
+        {% load my_tags %}
+        {% if user|in_group:"Пользователи" or  user.is_superuser%}
+        <div class="carousel-item">
+            <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"
+                 aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+                <rect width="100%" height="100%" fill="var(--bs-secondary-color)"/>
+            </svg>
+            <div class="container">
+                <div class="carousel-caption text-end">
+                    <p><a class="btn btn-lg btn-primary" href="{% url 'mailing:attempt' %}">Статистика</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if user.is_superuser %}
+        <div class="carousel-item">
+            <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"
+                 aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+                <rect width="100%" height="100%" fill="var(--bs-secondary-color)"/>
+            </svg>
+            <div class="container">
+                <div class="carousel-caption text-end">
+                    <p><a class="btn btn-lg btn-primary" href="{% url 'users:users' %}">Список пользователей</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>

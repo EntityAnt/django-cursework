@@ -1,8 +1,12 @@
+from django.urls import reverse
+
+from django.contrib.auth.decorators import permission_required, login_required
+from django.core.cache import cache
 from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from config.settings import EMAIL_HOST_USER
+from config.settings import EMAIL_HOST_USER, CACHE_ENABLE
 from mailing.models import Mailing, MailingAttempt
 
 
@@ -38,3 +42,38 @@ def run_mailing(request, pk):
         mailing.status = Mailing.COMPLETED
     mailing.save()
     return redirect('mailing:mailing_list')
+
+
+def get_mailing_from_cache():
+    """ Получение данных по рассылкам из кэша, если кэш пуст берем из БД. """
+    if not CACHE_ENABLE:
+        return Mailing.objects.all()
+    key = 'mailing_list'
+    cache_data = cache.get(key)
+    if cache_data is not None:
+        return cache_data
+    cache_data = Mailing.objects.all()
+    cache.set(key, cache_data)
+    return cache_data
+
+
+def get_attempt_from_cache():
+    """ Получение данных по попыткам из кэша, если кэш пуст берем из БД."""
+    if not CACHE_ENABLE:
+        return MailingAttempt.objects.all()
+    key = 'attempt_list'
+    cache_data = cache.get(key)
+    if cache_data is not None:
+        return cache_data
+    cache_data = MailingAttempt.objects.all()
+    cache.set(key, cache_data)
+    return cache_data
+
+
+@login_required
+def block_mailing(request, pk):
+    mailing = Mailing.objects.get(pk=pk)
+    mailing.is_active = {mailing.is_active: False,
+                      not mailing.is_active: True}[True]
+    mailing.save()
+    return redirect(reverse('mailing:mailing_list'))

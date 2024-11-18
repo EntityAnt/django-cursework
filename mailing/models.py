@@ -63,6 +63,9 @@ class Mailing(models.Model):
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
         ordering = ["first_sending"]
+        permissions = [
+            ("can_disable_mailing", "Возможность отключения рассылки"),
+        ]
 
 
 class MailingAttempt(models.Model):
@@ -79,6 +82,8 @@ class MailingAttempt(models.Model):
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, verbose_name='Статус попытки')
     server_response = models.TextField(verbose_name="Ответ почтового сервера")
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name="Рассылка", related_name="mailing")
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Владелец')
+
 
     def __str__(self):
         return f"{self.date_attempt} <{self.status}>"

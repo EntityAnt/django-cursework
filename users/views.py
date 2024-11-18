@@ -1,10 +1,12 @@
 import secrets
 
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
-from django.views.generic import CreateView, TemplateView, FormView, DetailView, UpdateView
+from django.views.generic import CreateView, TemplateView, FormView, DetailView, UpdateView, ListView, DeleteView
 
 from config.settings import EMAIL_HOST_USER
 from users.forms import UserRegistrationForm, UserLoginForm, PasswordRecoveryForm, UserForm, UserUpdateForm
@@ -38,15 +40,56 @@ class UserLoginView(LoginView):
     form_class = UserLoginForm
 
 
-class UserDetailView(DetailView):
+class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = User
-    form_class = UserForm
+    template_name = 'users/user_list.html'
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Менеджеры').exists() or self.request.user.is_superuser
 
 
-class UserUpdateView(UpdateView):
+class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
     form_class = UserUpdateForm
-    success_url = reverse_lazy('mailing:index')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
+
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserUpdateForm
+
+    def get_success_url(self):
+        if self.request.user.is_superuser:
+            return reverse_lazy('users:users')
+        else:
+            return reverse_lazy('mailing:index')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
+
+
+class UserDeleteView(LoginRequiredMixin, DeleteView):
+    model = User
+
+    def get_success_url(self):
+        if self.request.user.is_superuser:
+            return reverse_lazy('users:users')
+        else:
+            return reverse_lazy('mailing:index')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        return self.object
 
 
 class EmailConfirmationView(TemplateView):
