@@ -13,8 +13,17 @@ pillow = "^11.0.0"
 django = "4.2.2"
 redis = "^5.2.0"
 django-countries = "^7.6.1"
+black = "^24.10.0"
+flake8 = "^7.1.1"
+isort = "^5.13.2"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+line_length = 119
+
+[tool.black]
+line-length = 119
